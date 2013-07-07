@@ -1,1 +1,0 @@
-cd Java & javac *.java & cd ../Scala & scalac *.scala & cd ../Cpp & g++ *.cpp & cd ../Haskell & ghc Main.hs & cd ..
