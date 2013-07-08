@@ -32,7 +32,7 @@ public class Algorithm {
 					}
 					if (neighborTile.isHole) {
 						if (useHole) {
-							if (field.getNumConstructableNeighborTiles(neighborPoint) < Installation.Bridge.materialCost) {
+							if (field.getNumNeighborTilesWithInstallation(neighborPoint, null, 1) < Installation.Bridge.materialCost) {
 								canGo = false;
 							}
 						} else {

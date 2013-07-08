@@ -11,8 +11,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
-	final static int TowerRange = 2;
-	final static int NumRobotsToDefendConstruction = 5;
+	final static int DistanceBetweenTowerAndEnemyInitial = 2;
+	final static int NumRobotsToDefendConstruction = 10;
 	Random random;
 
 	public static void main(String[] args) {
@@ -36,7 +36,8 @@ public class Main {
 
 	private boolean buildTower(final Game game) {
 		for (Point enemyInitialPoint : game.field.getPointsWithEnemyInitial(game.myId)) {
-			List<Point> pointsToBuild = game.field.getPointsInRadius(enemyInitialPoint, TowerRange, false);
+			List<Point> pointsToBuild = game.field.getPointsInRadius(enemyInitialPoint,
+					DistanceBetweenTowerAndEnemyInitial, false);
 			for (Point point : pointsToBuild) {
 				if (game.field.tiles.containsKey(point)) {
 					Tile tile = game.field.tiles.get(point);
@@ -89,15 +90,26 @@ public class Main {
 	private void setNumRequiredRobotsForTower(final Game game, Map<Point, Integer> numRequiredRobots) {
 		List<Point> pointsToBuildTower = new ArrayList<Point>();
 		for (final Point enemyInitialPoint : game.field.getPointsWithEnemyInitial(game.myId)) {
-			List<Point> candidatePoints = game.field.getPointsInRadius(enemyInitialPoint, TowerRange, false);
+			List<Point> candidatePoints = game.field.getPointsInRadius(enemyInitialPoint,
+					DistanceBetweenTowerAndEnemyInitial, false);
 			Collections.sort(candidatePoints, new Comparator<Point>() {
+				private int getScore(Point point) {
+					Point center = new Point(0, 0);
+					Point myInitial = game.field.getPointWithMyInitial(game.myId);
+					int score = 0;
+					score += game.field.getDistance(point, center);
+					score -= game.field.getDistance(point, myInitial);
+					score -= game.field.getNumNeighborTilesWithInstallation(center, Installation.Attack, 3);
+					return score;
+				}
+
 				@Override
 				public int compare(Point point1, Point point2) {
-					int distance1 = game.field.getDistance(point1, enemyInitialPoint);
-					int distance2 = game.field.getDistance(point2, enemyInitialPoint);
-					if (distance1 == distance2) {
+					int score1 = getScore(point1);
+					int score2 = getScore(point2);
+					if (score1 == score2) {
 						return 0;
-					} else if (distance1 > distance2) {
+					} else if (score1 > score2) {
 						return -1;
 					} else {
 						return 1;
@@ -109,7 +121,7 @@ public class Main {
 				Tile candidateTile = game.field.tiles.get(candidatePoint);
 				if (!candidateTile.isHole
 						&& candidateTile.installation == null
-						&& game.field.getNumConstructableNeighborTiles(candidatePoint) >= Installation.Attack.materialCost) {
+						&& game.field.getNumNeighborTilesWithInstallation(candidatePoint, null, 1) >= Installation.Attack.materialCost) {
 					pointsToBuildTower.add(candidatePoint);
 					break;
 				}

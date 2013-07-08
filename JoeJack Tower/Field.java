@@ -56,6 +56,17 @@ public class Field {
 		return result;
 	}
 
+	public Point getPointWithMyInitial(int myId) {
+		for (Entry<Point, Tile> pointAndTile : tiles.entrySet()) {
+			Point point = pointAndTile.getKey();
+			Tile tile = pointAndTile.getValue();
+			if (tile.installation == Installation.Initial && tile.playerId == myId) {
+				return point;
+			}
+		}
+		throw new RuntimeException("There is no my Initial");
+	}
+
 	public List<Point> getPointsInRadius(Point center, int radius, boolean includeCenter) {
 		ArrayList<Point> result = new ArrayList<Point>();
 		for (int dx = -radius; dx <= radius; dx++) {
@@ -84,12 +95,16 @@ public class Field {
 		return Integer.MAX_VALUE;
 	}
 
-	public int getNumConstructableNeighborTiles(Point center) {
+	public int getNumNeighborTilesWithInstallation(Point center, Installation installation, int radius) {
 		int result = 0;
-		for (Point neighborPoint : getPointsInRadius(center, 1, true)) {
+		for (Point neighborPoint : getPointsInRadius(center, radius, true)) {
 			Tile neighborTile = tiles.get(neighborPoint);
-			if (neighborTile.installation == null && !neighborTile.isHole) {
-				result++;
+			if (neighborTile.installation == installation) {
+				if (neighborTile.installation != null) {
+					result++;
+				} else if (!neighborTile.isHole) {
+					result++;
+				}
 			}
 		}
 		return result;
