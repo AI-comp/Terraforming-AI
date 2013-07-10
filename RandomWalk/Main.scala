@@ -62,14 +62,14 @@ object Main {
   }
 
   def getBuildTargets(point: Point) = {
-    val cityTown = List(Installation.city, Installation.town)
+    val cityTown = List(/*Installation.city,*/ Installation.town)
     val townBuildable = field.hasSufficientMaterialAmount(point, Installation.town, game.playerId)
 
     getPhase() match {
       case Phase.generateMaterial => if(townBuildable) cityTown else List(Installation.pit)
       case Phase.generateRobot    => if(townBuildable) cityTown else List(Installation.factory)
-      case Phase.build => List(Installation.city, Installation.town)
-      case Phase.spurt => List(Installation.city, Installation.town, Installation.house)
+      case Phase.build => List(/*Installation.city,*/ Installation.town)
+      case Phase.spurt => List(/*Installation.city,*/ Installation.town, Installation.house)
     }
   }
 
@@ -143,3 +143,4 @@ object Main {
     }
   }
 }
+
