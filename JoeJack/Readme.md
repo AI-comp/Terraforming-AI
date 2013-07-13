@@ -1,5 +1,5 @@
 JoeJack AI Collection
----
+===
 
 全ファイルをdefault packageに入れて使用すること。
 サンプルAIのAPIを大幅に変更している。
