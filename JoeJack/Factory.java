@@ -16,7 +16,7 @@ public class Factory {
 	final static int NumPointsToBuildFactorysAtOnce = 2;
 	final static int NumPointsToInvadeAtOnce = 20;
 	final static int NumRobotsToInvade = 100;
-	final static double TurnRatioToBuildFactory = 0.4;
+	final static double TurnRatioToBuildFactory = 0.5;
 	Random random;
 
 	public static void main(String[] args) {

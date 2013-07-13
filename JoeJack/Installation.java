@@ -1,6 +1,6 @@
 public enum Installation {
   Initial(0, 0, 3),
-  Robotmaker(30, 4, 3),
+  Robotmaker(50, 4, 3),
   Bridge(15, 4, 3),
   Attack(25, 5, 3),
   Excavator(20, 4, 3),

@@ -11,8 +11,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Tower {
-	final static int DistanceBetweenTowerAndEnemyInitial = 2;
-	final static int NumRobotsToDefendConstruction = 10;
+	final static int DistanceBetweenTowerAndEnemyInitial = 3;
+	final static int NumRobotsToDefendConstruction = 5;
 	Random random;
 
 	public static void main(String[] args) {

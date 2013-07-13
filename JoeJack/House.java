@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class House {
 	final static int DistanceBetweenHouseAndMyInitial = 5;
-	final static int NumRobotsToDefendConstruction = 10;
+	final static int NumRobotsToDefendConstruction = 2;
 	final static int NumPointsToBuildHousesAtOnce = 3;
 	Random random;
 
