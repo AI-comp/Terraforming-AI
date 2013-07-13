@@ -1,9 +1,9 @@
 public enum Installation {
   Initial(0, 0, 3),
-  Factory(30, 4, 3),
+  Robotmaker(30, 4, 3),
   Bridge(15, 4, 3),
   Attack(25, 5, 3),
-  Pit(20, 4, 3),
+  Excavator(20, 4, 3),
   House(10, 4, 3),
   Town(10, 9, 3);
 
