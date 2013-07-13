@@ -10,14 +10,14 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
-public class Main {
+public class Tower {
 	final static int DistanceBetweenTowerAndEnemyInitial = 2;
 	final static int NumRobotsToDefendConstruction = 10;
 	Random random;
 
 	public static void main(String[] args) {
-		Main main = new Main();
-		main.run();
+		Tower ai = new Tower();
+		ai.run();
 	}
 
 	private void run() {
