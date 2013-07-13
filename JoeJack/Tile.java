@@ -28,4 +28,12 @@ public class Tile {
 		return ((installation == Installation.Bridge) == isHole && this.installation == null
 				&& field.getNumAvailableResources(point, playerId) >= installation.materialCost && robot >= installation.robotCost);
 	}
+
+	public boolean canMoveInto(int playerId) {
+		if (this.playerId != playerId && installation != null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }

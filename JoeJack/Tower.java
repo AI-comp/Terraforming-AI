@@ -205,7 +205,7 @@ public class Tower {
 				List<Point> alternatePoints = new ArrayList<Point>();
 				for (Point candidateAlternatePoint : candidateAlternatePoints) {
 					Tile candidateAlternateTile = game.field.tiles.get(candidateAlternatePoint);
-					if (!candidateAlternateTile.isHole && candidateAlternateTile.installation == null) {
+					if (!candidateAlternateTile.isHole && candidateAlternateTile.canMoveInto(game.myId)) {
 						alternatePoints.add(candidateAlternatePoint);
 					}
 				}
