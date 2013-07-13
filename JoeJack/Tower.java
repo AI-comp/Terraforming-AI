@@ -155,6 +155,8 @@ public class Tower {
 				continue;
 			}
 
+			List<List<Point>> shortestPathToDestinations = new ArrayList<List<Point>>();
+
 			for (Entry<Point, Integer> destination : numRequiredRobots.entrySet()) {
 				Point destinationPoint = destination.getKey();
 				Tile destinationTile = game.field.tiles.get(destinationPoint);
@@ -172,10 +174,26 @@ public class Tower {
 				}
 
 				if (shortestPath.size() > 0) {
-					move(currentPoint, currentPoint.getDirection(shortestPath.get(0)), numRobotsToMove);
-					pointsWithMovedRobots.add(currentPoint);
-					break;
+					shortestPathToDestinations.add(shortestPath);
 				}
+			}
+
+			if (shortestPathToDestinations.size() > 0) {
+				Collections.sort(shortestPathToDestinations, new Comparator<List<Point>>() {
+					@Override
+					public int compare(List<Point> left, List<Point> right) {
+						if (left.size() == right.size()) {
+							return 0;
+						} else if (left.size() < right.size()) {
+							return -1;
+						} else {
+							return 1;
+						}
+					}
+				});
+				assert (numRobotsToMove <= currentTile.robot);
+				move(currentPoint, currentPoint.getDirection(shortestPathToDestinations.get(0).get(0)), numRobotsToMove);
+				pointsWithMovedRobots.add(currentPoint);
 			}
 		}
 	}
@@ -195,9 +213,10 @@ public class Tower {
 				Tile currentTile = game.field.tiles.get(currentPoint);
 				int numRobotsToMove = getNumRobotsToMove(currentPoint, currentTile, numRequiredRobots);
 
-				if (candidateAlternatePoints.size() > 0) {
+				if (numRobotsToMove > 0 && candidateAlternatePoints.size() > 0) {
 					Point alternatePoint = candidateAlternatePoints
 							.get(random.nextInt(candidateAlternatePoints.size()));
+					assert (numRobotsToMove <= currentTile.robot);
 					move(currentPoint, currentPoint.getDirection(alternatePoint), numRobotsToMove);
 					pointsWithMovedRobots.add(currentPoint);
 				}
