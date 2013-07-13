@@ -79,7 +79,7 @@ public class Tower {
 		List<Point> pointsToBuildBridge = new ArrayList<Point>();
 		for (Point point : game.field.getPointsWithRobots(game.myId)) {
 			Tile tile = game.field.tiles.get(point);
-			if (tile.isHole) {
+			if (tile.isHole && tile.installation == null) {
 				pointsToBuildBridge.add(point);
 			}
 		}

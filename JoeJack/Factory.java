@@ -15,7 +15,7 @@ public class Factory {
 	final static int NumRobotsToDefendConstruction = 10;
 	final static int NumPointsToBuildFactorysAtOnce = 2;
 	final static int NumPointsToInvadeAtOnce = 20;
-	final static int NumRobotsToInvade = 300;
+	final static int NumRobotsToInvade = 100;
 	final static double TurnRatioToBuildFactory = 0.4;
 	Random random;
 
@@ -78,7 +78,7 @@ public class Factory {
 		List<Point> pointsToBuildBridge = new ArrayList<Point>();
 		for (Point point : game.field.getPointsWithRobots(game.myId)) {
 			Tile tile = game.field.tiles.get(point);
-			if (tile.isHole) {
+			if (tile.isHole && tile.installation == null) {
 				pointsToBuildBridge.add(point);
 			}
 		}
@@ -265,10 +265,13 @@ public class Factory {
 		Map<Point, Integer> numRequiredRobots = new HashMap<Point, Integer>();
 
 		setNumRequiredRobotsForBridge(game, numRequiredRobots);
-		setNumRequiredRobotsForFactory(game, numRequiredRobots);
-		setNumRequiredRobotsForInvation(game, numRequiredRobots);
-		moveRobots(game, numRequiredRobots, pointsWithMovedRobots);
+		if (game.turn < game.maxTurn * TurnRatioToBuildFactory) {
+			setNumRequiredRobotsForFactory(game, numRequiredRobots);
+		} else {
+			setNumRequiredRobotsForInvation(game, numRequiredRobots);
+		}
 
+		moveRobots(game, numRequiredRobots, pointsWithMovedRobots);
 		moveRemainingRobots(game, numRequiredRobots, pointsWithMovedRobots);
 	}
 
