@@ -1,4 +1,4 @@
-package FixedJoeJack;
+package JoeJack;
 
 import java.util.ArrayList;
 import java.util.HashMap;

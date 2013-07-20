@@ -1,4 +1,4 @@
-package FixedJoeJack;
+package JoeJack;
 
 public class Point {
 	public final int x;

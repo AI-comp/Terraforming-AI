@@ -1,4 +1,4 @@
-package FixedJoeJack;
+package JoeJack;
 
 public enum Direction {
   Left(-1, 0, "l"),

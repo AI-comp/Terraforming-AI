@@ -1,4 +1,4 @@
-package FixedJoeJack;
+package JoeJack;
 
 public class Game {
   public final int turn;

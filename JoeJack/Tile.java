@@ -1,4 +1,4 @@
-package FixedJoeJack;
+package JoeJack;
 
 public class Tile {
   public final int playerId;

@@ -1,4 +1,4 @@
-package FixedJoeJack;
+package JoeJack;
 
 public enum Installation {
   Initial(0, 0, 3),
