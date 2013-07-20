@@ -1,3 +1,5 @@
+package FixedJoeJack;
+
 public enum Direction {
   Left(-1, 0, "l"),
   Right(1, 0, "r"),

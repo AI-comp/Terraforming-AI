@@ -1,3 +1,5 @@
+package FixedJoeJack;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -64,7 +66,7 @@ public class House {
 			Utility.AddIntToMap(numRequiredRobots, pointToBuildInstallation, installation.robotCost);
 			for (Point neighborPoint : game.field.getPointsInRadius(pointToBuildInstallation, 1, false)) {
 				Tile neighborTile = game.field.tiles.get(neighborPoint);
-				if (!neighborTile.isHole && neighborTile.installation == null) {
+				if (!neighborTile.isHole && neighborTile.installation == Installation.None) {
 					Utility.AddIntToMap(numRequiredRobots, neighborPoint, NumRobotsToDefendConstruction);
 				}
 			}
@@ -75,7 +77,7 @@ public class House {
 		List<Point> pointsToBuildBridge = new ArrayList<Point>();
 		for (Point point : game.field.getPointsWithRobots(game.myId)) {
 			Tile tile = game.field.tiles.get(point);
-			if (tile.isHole && tile.installation == null) {
+			if (tile.isHole && tile.installation == Installation.None) {
 				pointsToBuildBridge.add(point);
 			}
 		}
@@ -115,8 +117,8 @@ public class House {
 		for (Point candidatePoint : candidatePoints) {
 			Tile candidateTile = game.field.tiles.get(candidatePoint);
 			if (!candidateTile.isHole
-					&& candidateTile.installation == null
-					&& game.field.getNumNeighborTilesWithInstallation(candidatePoint, null, 1) >= Installation.House.materialCost) {
+					&& candidateTile.installation == Installation.None
+					&& game.field.getNumNeighborTilesWithInstallation(candidatePoint, Installation.None, 1) >= Installation.House.materialCost) {
 				pointsToBuildHouse.add(candidatePoint);
 				numAdoptedPoints++;
 				if (numAdoptedPoints >= NumPointsToBuildHousesAtOnce) {
@@ -252,32 +254,41 @@ public class House {
 			throw new RuntimeException("START should be retrieved.");
 		}
 
-		int turn = scanner.nextInt();
-		int maxTurn = scanner.nextInt();
-		int myId = scanner.nextInt();
-		int radius = scanner.nextInt();
-		Game game = new Game(turn, maxTurn, myId, new Field(radius));
-		Field field = game.field;
+	   int turn = scanner.nextInt();
+	    int maxTurn = scanner.nextInt();
+	    int myId = scanner.nextInt();
+	    int radius = scanner.nextInt();
+	    Game game = new Game(turn, maxTurn, myId, new Field(radius));
+	    Field field = game.field;
 
-		int nTiles = scanner.nextInt();
-		for (int i = 0; i < nTiles; i++) {
-			Point point = new Point(scanner.nextInt(), scanner.nextInt());
+	    int nTiles = scanner.nextInt();
+	    for (int i = 0; i < nTiles; i++) {
+	      Point point = new Point(scanner.nextInt(), scanner.nextInt());
 
-			int playerId = scanner.nextInt();
-			int robot = scanner.nextInt();
-			int resource = scanner.nextInt();
-			String instName = scanner.next();
-			String capitalizedName = instName.substring(0, 1).toUpperCase() + instName.substring(1);
-			boolean isHole = false;
-			Installation inst = null;
-			if (capitalizedName.equals("Hole")) {
-				isHole = true;
-			} else if (!capitalizedName.equals("None")) {
-				inst = Installation.valueOf(capitalizedName);
-			}
-			Tile tile = new Tile(playerId, robot, resource, isHole, inst);
-			field.tiles.put(point, tile);
-		}
+	      int playerId = scanner.nextInt();
+	      int robot = scanner.nextInt();
+	      int resource = scanner.nextInt();
+	      boolean isHole = false;
+
+	      String landformName = scanner.next();
+	      String capitalizedlandformName = landformName.substring(0, 1)
+	          .toUpperCase() + landformName.substring(1);
+	      Landform landform = Landform.valueOf(capitalizedlandformName);
+
+	      String instName = scanner.next();
+	      String capitalizedInstName = instName.substring(0, 1).toUpperCase()
+	          + instName.substring(1);
+	      Installation inst = Installation.None;
+	      if (capitalizedInstName.equals("Hole")) {
+	        isHole = true;
+	      } else {
+	        inst = Installation.valueOf(capitalizedInstName);
+	      }
+
+	      Tile tile = new Tile(playerId, robot, resource, isHole, landform, inst);
+	      field.tiles.put(point, tile);
+	    }
+
 		if (!scanner.next().equals("EOS")) {
 			throw new RuntimeException("EOS should be retrieved.");
 		}
