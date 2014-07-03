@@ -1,3 +1,5 @@
+package JoeJack;
+
 public class Game {
   public final int turn;
   public final int maxTurn;

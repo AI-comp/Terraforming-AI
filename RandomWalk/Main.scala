@@ -17,9 +17,9 @@ object StringifyParser extends RegexParsers {
       new Field(radius, tileSize, tiles.toMap)
   }
 
-  val tileStringify = num ~ num ~ num ~ num ~ num ~ str ^^ {
-    case x ~ y ~ ownerId ~ robots ~ resource ~ inst =>
-      (new Point(x, y), new Tile(ownerId, robots, resource, inst))
+  val tileStringify = num ~ num ~ num ~ num ~ num ~ str ~ str ^^ {
+    case x ~ y ~ ownerId ~ robots ~ resource ~ landform ~ inst =>
+      (new Point(x, y), new Tile(ownerId, robots, resource, landform, inst))
   }
 
   def parse(input: String) = parseAll(gameStringify, input)
@@ -27,16 +27,16 @@ object StringifyParser extends RegexParsers {
 
 case class Phase(start: Int, end: Int)
 object Phase {
-  val generateRobot    = Phase(0  , 75)
-  val generateMaterial = Phase(75 , 125)
-  val build            = Phase(125, 190)
-  val spurt            = Phase(190, 201)
+  val generateRobot = Phase(0, 75)
+  val generateMaterial = Phase(75, 125)
+  val build = Phase(125, 190)
+  val spurt = Phase(190, 201)
 
   val all = List(generateRobot, generateMaterial, build, spurt)
 }
 
 object Main {
-  var game: Game = null 
+  var game: Game = null
   def tiles = game.field.tiles
   def field = game.field
 
@@ -54,7 +54,7 @@ object Main {
 
   def getPhase() = {
     Phase.all.find(phase => (phase.start <= game.currentTurn && game.currentTurn < phase.end))
-    .map{v=>v}.getOrElse(Phase.spurt)
+      .map { v => v }.getOrElse(Phase.spurt)
   }
 
   def getBuildTarget(point: Point) = {
@@ -62,14 +62,14 @@ object Main {
   }
 
   def getBuildTargets(point: Point) = {
-    val cityTown = List(/*Installation.city,*/ Installation.town)
+    val cityTown = List( /*Installation.city,*/ Installation.town)
     val townBuildable = field.hasSufficientMaterialAmount(point, Installation.town, game.playerId)
 
     getPhase() match {
-      case Phase.generateMaterial => if(townBuildable) cityTown else List(Installation.pit)
-      case Phase.generateRobot    => if(townBuildable) cityTown else List(Installation.factory)
-      case Phase.build => List(/*Installation.city,*/ Installation.town)
-      case Phase.spurt => List(/*Installation.city,*/ Installation.town, Installation.house)
+      case Phase.generateMaterial => if (townBuildable) cityTown else List(Installation.excavator)
+      case Phase.generateRobot => if (townBuildable) cityTown else List(Installation.robotmaker)
+      case Phase.build => List( /*Installation.city,*/ Installation.town)
+      case Phase.spurt => List( /*Installation.city,*/ Installation.town, Installation.house)
     }
   }
 
@@ -77,49 +77,51 @@ object Main {
     val ownTiles = field.ownedTiles(game.playerId)
     val ownHoleTiles = ownTiles.filter(kv => kv._2.isHole && field.canBuildInstallation(kv._1, Installation.bridge, game.playerId))
 
-    random.shuffle(ownHoleTiles).headOption.map {hole =>
+    random.shuffle(ownHoleTiles).headOption.map { hole =>
       build(hole._1, Installation.bridge)
     }
-    .getOrElse {
-      for((point, tile) <- field.ownedTiles(game.playerId)) {
-        getBuildTarget(point).map{inst => build(point, inst)}
+      .getOrElse {
+        for ((point, tile) <- field.ownedTiles(game.playerId)) {
+          getBuildTarget(point).map { inst => build(point, inst) }
+        }
       }
-    }
   }
 
   def randomMove() = {
     val movableTiles = field.ownedTiles(game.playerId).filter(kv => (kv._2.robots > 0 && !kv._2.isHole))
-    def isInAttackRange(point: Point) = !field.aroundInstallationTiles(point, Installation.attack).isEmpty
+    def isInAttackRange(point: Point) = !field.aroundInstallationTiles(point, Installation.tower).isEmpty
 
-    if(!movableTiles.isEmpty) {
-      movableTiles.foreach{kv => {
-        val (point, tile) = kv
-        val movableDirs = Direction.all.filter(dir => field.canEnter(point, dir))
-        val safeMovableDirs = movableDirs.filter(dir => !isInAttackRange(point + dir))
+    if (!movableTiles.isEmpty) {
+      movableTiles.foreach { kv =>
+        {
+          val (point, tile) = kv
+          val movableDirs = Direction.all.filter(dir => field.canEnter(point, dir))
+          val safeMovableDirs = movableDirs.filter(dir => !isInAttackRange(point + dir))
 
-        if(!movableDirs.isEmpty) {
-          val notOwnTiles = movableDirs.filter(dir => tiles(point + dir).isOwnerEmpty)
-          val enemyTiles = safeMovableDirs.filter(dir => tiles(point + dir).isOwnedByEnemy(game.playerId))
+          if (!movableDirs.isEmpty) {
+            val notOwnTiles = movableDirs.filter(dir => tiles(point + dir).isOwnerEmpty)
+            val enemyTiles = safeMovableDirs.filter(dir => tiles(point + dir).isOwnedByEnemy(game.playerId))
 
-          val highPriorityTiles = safeMovableDirs.filter(dir => { 
-            val dest = (point + dir)
-            val materials = field.aroundMaterialAmount(point, game.playerId);
-            val requireCost = getBuildTargets(dest).map(_.materialCost).min
-            tiles(dest).isNone && materials >= requireCost
-          })
+            val highPriorityTiles = safeMovableDirs.filter(dir => {
+              val dest = (point + dir)
+              val materials = field.aroundMaterialAmount(point, game.playerId);
+              val requireCost = getBuildTargets(dest).map(_.materialCost).min
+              tiles(dest).isNone && materials >= requireCost
+            })
 
-          val dir = 
-          if     (!notOwnTiles.isEmpty) random.shuffle(notOwnTiles).head
-          else if(!highPriorityTiles.isEmpty) random.shuffle(highPriorityTiles).head
-          else if(!enemyTiles.isEmpty) enemyTiles.sortWith((e1, e2) => tiles(e1 + point).robots < tiles(e2 + point).robots).head
-          else safeMovableDirs.sortWith((e1, e2) => tiles(e1 + point).robots < tiles(e2 + point).robots).head
+            val dir =
+              if (!notOwnTiles.isEmpty) random.shuffle(notOwnTiles).head
+              else if (!highPriorityTiles.isEmpty) random.shuffle(highPriorityTiles).head
+              else if (!enemyTiles.isEmpty) enemyTiles.sortWith((e1, e2) => tiles(e1 + point).robots < tiles(e2 + point).robots).head
+              else safeMovableDirs.sortWith((e1, e2) => tiles(e1 + point).robots < tiles(e2 + point).robots).head
 
-          val amount = if(tile.robots > 1) random.shuffle(tile.robots/2 to tile.robots).head else 1
+            val amount = if (tile.robots > 1) random.shuffle(tile.robots / 2 to tile.robots).head else 1
 
-          move(point, dir, amount)
+            move(point, dir, amount)
+          }
         }
       }
-    }}
+    }
   }
 
   def main(args: Array[String]) {
@@ -131,12 +133,12 @@ object Main {
       val commands = Iterator.continually(readLine()).takeWhile(_ != "EOS").toList
 
       val result = StringifyParser.parse(commands.mkString("\n"))
-      if ( result.successful ){
+      if (result.successful) {
         game = result.get
 
         builded = false
         randomBuild()
-        if(!builded) randomMove();
+        if (!builded) randomMove();
       }
 
       System.out.println("finish")

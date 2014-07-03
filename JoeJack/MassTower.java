@@ -1,3 +1,5 @@
+package JoeJack;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,8 +41,8 @@ public class MassTower {
 		for (Entry<Point, Tile> pointAndTile : game.field.tiles.entrySet()) {
 			Point point = pointAndTile.getKey();
 			Tile tile = pointAndTile.getValue();
-			if (tile.canBuildInstallation(Installation.Attack, game.field, game.myId)) {
-				build(point, Installation.Attack);
+			if (tile.canBuildInstallation(Installation.Tower, game.field, game.myId)) {
+				build(point, Installation.Tower);
 				return true;
 			}
 		}
@@ -116,7 +118,7 @@ public class MassTower {
 			Tile candidateTile = game.field.tiles.get(candidatePoint);
 			if (!candidateTile.isHole
 					&& candidateTile.installation == null
-					&& game.field.getNumNeighborTilesWithInstallation(candidatePoint, null, 1) >= Installation.Attack.materialCost) {
+					&& game.field.getNumNeighborTilesWithInstallation(candidatePoint, null, 1) >= Installation.Tower.materialCost) {
 				pointsToBuildHouse.add(candidatePoint);
 				numAdoptedPoints++;
 				if (numAdoptedPoints >= NumPointsToBuildHousesAtOnce) {
@@ -125,7 +127,7 @@ public class MassTower {
 			}
 		}
 
-		setNumRequiredRobotsForInstallation(game, numRequiredRobots, pointsToBuildHouse, Installation.Attack);
+		setNumRequiredRobotsForInstallation(game, numRequiredRobots, pointsToBuildHouse, Installation.Tower);
 	}
 
 	private int getNumRobotsToMove(Point point, Tile tile, Map<Point, Integer> numRequiredRobots) {
@@ -252,32 +254,40 @@ public class MassTower {
 			throw new RuntimeException("START should be retrieved.");
 		}
 
-		int turn = scanner.nextInt();
-		int maxTurn = scanner.nextInt();
-		int myId = scanner.nextInt();
-		int radius = scanner.nextInt();
-		Game game = new Game(turn, maxTurn, myId, new Field(radius));
-		Field field = game.field;
+    int turn = scanner.nextInt();
+    int maxTurn = scanner.nextInt();
+    int myId = scanner.nextInt();
+    int radius = scanner.nextInt();
+    Game game = new Game(turn, maxTurn, myId, new Field(radius));
+    Field field = game.field;
 
-		int nTiles = scanner.nextInt();
-		for (int i = 0; i < nTiles; i++) {
-			Point point = new Point(scanner.nextInt(), scanner.nextInt());
+    int nTiles = scanner.nextInt();
+    for (int i = 0; i < nTiles; i++) {
+      Point point = new Point(scanner.nextInt(), scanner.nextInt());
 
-			int playerId = scanner.nextInt();
-			int robot = scanner.nextInt();
-			int resource = scanner.nextInt();
-			String instName = scanner.next();
-			String capitalizedName = instName.substring(0, 1).toUpperCase() + instName.substring(1);
-			boolean isHole = false;
-			Installation inst = null;
-			if (capitalizedName.equals("Hole")) {
-				isHole = true;
-			} else if (!capitalizedName.equals("None")) {
-				inst = Installation.valueOf(capitalizedName);
-			}
-			Tile tile = new Tile(playerId, robot, resource, isHole, inst);
-			field.tiles.put(point, tile);
-		}
+      int playerId = scanner.nextInt();
+      int robot = scanner.nextInt();
+      int resource = scanner.nextInt();
+      boolean isHole = false;
+
+      String landformName = scanner.next();
+      String capitalizedlandformName = landformName.substring(0, 1)
+          .toUpperCase() + landformName.substring(1);
+      Landform landform = Landform.valueOf(capitalizedlandformName);
+
+      String instName = scanner.next();
+      String capitalizedInstName = instName.substring(0, 1).toUpperCase()
+          + instName.substring(1);
+      Installation inst = null;
+      if (capitalizedInstName.equals("Hole")) {
+        isHole = true;
+      } else {
+        inst = Installation.valueOf(capitalizedInstName);
+      }
+
+      Tile tile = new Tile(playerId, robot, resource, isHole, landform, inst);
+      field.tiles.put(point, tile);
+    }
 		if (!scanner.next().equals("EOS")) {
 			throw new RuntimeException("EOS should be retrieved.");
 		}

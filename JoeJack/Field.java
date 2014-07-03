@@ -1,3 +1,5 @@
+package JoeJack;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,7 @@ public class Field {
 		for (Entry<Point, Tile> pointAndTile : tiles.entrySet()) {
 			Point point = pointAndTile.getKey();
 			Tile tile = pointAndTile.getValue();
-			if (tile.installation == null) {
+			if (tile.installation == Installation.None) {
 				result.add(point);
 			}
 		}
@@ -100,7 +102,7 @@ public class Field {
 		for (Point neighborPoint : getPointsInRadius(center, radius, true)) {
 			Tile neighborTile = tiles.get(neighborPoint);
 			if (neighborTile.installation == installation) {
-				if (neighborTile.installation != null) {
+				if (neighborTile.installation != Installation.None) {
 					result++;
 				} else if (!neighborTile.isHole) {
 					result++;
