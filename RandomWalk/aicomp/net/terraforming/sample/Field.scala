@@ -1,5 +1,6 @@
 package aicomp.net.terraforming.sample
 
+
 case class Field(radius: Int, tileSize: Int, tiles: Map[Point, Tile]) {
   def ownedTiles(playerId: Int) : Map[Point, Tile] = tiles.filter{kv => kv._2.ownerId == playerId}
 
